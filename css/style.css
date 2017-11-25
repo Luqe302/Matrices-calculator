@@ -6,6 +6,7 @@ input::-webkit-inner-spin-button {
 
 input {
     padding: .25rem;
+    width: 1.5rem;
 }
 
 button[type="submit"] {
