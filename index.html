@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>Matrices</title>
+        <link rel="stylesheet" href="./css/style.css">
+    </head>
+
+    <body>
+
+        <h1>Kalkulator Macierzy</h1>
+
+        <form id="options-form" action="">
+
+            <h2>Wybierz sposób działania na macierzy:</h2>
+            <div class="wrapper-method">
+                <label><input type="radio" name="method" value="0"> Dodawanie</label>
+                <label><input type="radio" name="method" value="0"> Odejmowanie</label>
+                <label><input type="radio" name="method" value="0"> Mnożenie</label>
+                <label><input type="radio" name="method" value="1"> Wyznacznik macierzy</label>
+            </div>
+
+            <div class="wrapper-selectSize">
+                <h2>Podaj wymiary macierzy:</h2>
+                <div id="matrice-size-1">
+                    Macierz nr. 1:
+                    <input max="10" class="matrice-size-input" id="matrice1Row" type="number">
+                    x
+                    <input max="10" class="matrice-size-input" id="matrice1Col" type="number">
+                </div>
+                <div id="matrice-size-2">
+                    Macierz nr. 2:
+                    <input max="10" class="matrice-size-input" id="matrice2Row" type="number">
+                    x
+                    <input max="10" class="matrice-size-input" id="matrice2Col" type="number">
+                </div>
+            </div>
+
+            <div class="matrices-wrapper"></div>
+            <button type="submit">Oblicz</button>
+
+        </form>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="./scripts/script.js"></script>
+
+    </body>
+
+</html>
