@@ -7,6 +7,9 @@ input::-webkit-inner-spin-button {
 input {
     padding: .25rem;
     width: 1.5rem;
+    border: none;
+    border-bottom: 1px solid #aaaa;
+    text-align: center;
 }
 
 button[type="submit"] {
@@ -22,7 +25,11 @@ button[type="submit"] {
 }
 
 table {
-    border-left: 1px solid #333;
-    border-right: 1px solid #333;
+    border-left: 1px solid #1e1e1e;
+    border-right: 1px solid #1e1e1e;
     margin: 1rem;
+}
+
+.matrices-result input {
+    border: none;
 }
