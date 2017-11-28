@@ -8,7 +8,7 @@ input[type=number] {
     -moz-appearance:textfield;
 }
 
-input {
+input:not([type="radio"]) {
     padding: .25rem;
     width: 2.3rem;
     border: none;
@@ -22,7 +22,7 @@ button[type="submit"] {
     margin-top: 1rem;
     cursor: pointer;
 }
-.info-wrapper {
+.error-wrapper {
     color: red;
 }
 

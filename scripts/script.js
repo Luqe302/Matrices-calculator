@@ -13,7 +13,6 @@
 
 	}
 
-
      /* Funkcja generująca pojedynczą macierz i umieszczająca ją w HTML. */
 	function generateEachMatrice(n, m, wrapper) {
 
@@ -163,10 +162,8 @@
 
 			if (arrsLength == 1) {
 				det = firstMatrice[0]
-				console.log('det = ' + det);
 			} else if (arrsLength == 2) {
 				det = (firstMatrice[0][0] * firstMatrice[1][1]) - (firstMatrice[0][1] * firstMatrice[1][0])
-				console.log('det = ' + det);
 			} else if (arrsLength == 3) {
 				det = (firstMatrice[0][0] * firstMatrice[1][1] * firstMatrice[2][2]) +
 					(firstMatrice[1][0] * firstMatrice[2][1] * firstMatrice[0][2]) +
@@ -174,14 +171,89 @@
 					(firstMatrice[0][2] * firstMatrice[1][1] * firstMatrice[2][0]) -
 					(firstMatrice[1][2] * firstMatrice[2][1] * firstMatrice[0][0]) -
 					(firstMatrice[2][2] * firstMatrice[0][1] * firstMatrice[1][0]);
-					console.log('det = ' + det);
 			}
 
+			matricesResultWrapper.html('<p>det = ' + det + '</p>').css("font-weight", "bold");
 
-		generateMatrices(arrsLength, arrsLength, null, null, matricesResultWrapper);
+	}
 
-		let matriceInputs = matricesResultWrapper.find($('input'));
-		addResultToInputs(matriceInputs, resultArr);
+	 /* Funkcja odpowiadająca za walidację formularza. Zawiera inne pomocnicze funkcje.
+	 Jako argumenty przyjmuje inputy poszczególnych macierzy oraz wybraną metodę.
+	 Zwraca boolean w zależności jak przebiegła walidacja. */
+	function validateMatriceCalculator(matriceInputs, checkedMethod) {
+
+		let errorWrapper = $('.error-wrapper'),
+			isInvalid = false;
+
+		if(!errorWrapper.length) errorWrapper = $('<div class="error-wrapper">');
+
+		errorWrapper.html('');
+
+		if(!checkedMethod) {
+			let error = $('<p>Wybierz metodę obliczania!</p>');
+			errorWrapper.append(error);
+			isInvalid = true;
+		}
+
+		if (methodDeterminant) {
+			if (!buildMatrice1Row.val() || !buildMatrice1Col.val()) {
+				let error = $('<p>Uzupełnij wymiary macierzy!</p>');
+				errorWrapper.append(error);
+				isInvalid = true;
+			}
+		} else if(!buildMatrice1Row.val() || !buildMatrice2Row.val() || !buildMatrice1Col.val() || !buildMatrice2Col.val()) {
+			let error = $('<p>Uzupełnij wymiary macierzy!</p>');
+			errorWrapper.append(error);
+			isInvalid = true;
+		}
+
+
+		if(checkedMethod === 'addition' || checkedMethod === 'subtraction') {
+			if(!(buildMatrice1Row.val() === buildMatrice2Row.val() && buildMatrice1Col.val() === buildMatrice2Col.val())) {
+				let error = $('<p>Przy dodawaniu i odejmowaniu, macierze powinny miec te same wymiary!</p>');
+				errorWrapper.append(error);
+				isInvalid = true;
+			}
+		}
+
+		if(checkedMethod === 'multiplication') {
+			if(!(buildMatrice1Col.val() === buildMatrice2Row.val())) {
+				let error = $('<p>Przy mnożeniu macierzy, pierwsza macierz powinna miec tyle kolumn co druga wierszy!</p>');
+				errorWrapper.append(error);
+				isInvalid = true;
+			}
+		}
+
+		if(checkedMethod === 'determinant') {
+			if(!(buildMatrice1Col.val() === buildMatrice1Row.val())) {
+				let error = $('<p>Przy liczeniu wyznacznika macierzy, macierz powinna byc kwadratowa!</p>');
+				errorWrapper.append(error);
+				isInvalid = true;
+			}
+		}
+
+		if(isMatriceEmpty()) {
+			let error = $('<p>Uzupełnij wszystkie pola macierzy!</p>');
+			errorWrapper.append(error);
+			isInvalid = true;
+		}
+
+		function isMatriceEmpty() {
+
+			let isEmpty = false;
+
+			matriceInputs.each(function (index, eachInput) {
+				eachInput = $(eachInput);
+				if (!eachInput.val()) isEmpty = true;
+			});
+
+			return isEmpty;
+
+		}
+
+		if(isInvalid) $('#options-form').append(errorWrapper);
+
+		return isInvalid;
 
 	}
 
@@ -189,7 +261,7 @@
         matriceSizer2 = $('#matrice-sizer-2'),
         methodDeterminant = null;
 
-    /* Funkcja odpowiadająca za chowanie i pokazywanie drugiej macierzy w zaleznosci od tego czy wybrana jest metoda leczenia wyznaczanika macierzy. */
+    /* Funkcja odpowiadająca za chowanie i pokazywanie drugiej macierzy w zaleznosci od tego czy wybrana jest metoda liczenia wyznaczanika macierzy. */
     methodRadios.on('click', function () {
         const radio = $(this),
         secondMatrice = $('.matrices-wrapper table')[1];
@@ -246,61 +318,13 @@
 			rightMatrice = $($('.matrices-wrapper table')[1]),
 
 			leftMatriceRows = leftMatrice.find($('tr')),
-			rightMatriceRows = rightMatrice.find($('tr')),
-			infoWrapper = optionsForm.find('.info-wrapper');
+			rightMatriceRows = rightMatrice.find($('tr'));
 
 
-        let isInvalid = false,
-			checkedMethod = $('input[name="method"]:checked').val(),
+        let checkedMethod = $('input[name="method"]:checked').val(),
 			matriceInputs = $('.matrices-wrapper input');
 
-        if(!checkedMethod) {
-			infoWrapper.html('<p>Wybierz metodę obliczania!</p>');
-			console.log('Wybierz metodę obliczania!');
-			isInvalid = true;
-		}
-
-		if (methodDeterminant) {
-			if (!buildMatrice1Row.val() || !buildMatrice1Col.val()) {
-				infoWrapper.html('<p>Uzupełnij wymiary macierzy!</p>');
-				console.log('Uzupełnij wymiary macierzy!');
-				isInvalid = true;
-			}
-		} else if(!buildMatrice1Row.val() || !buildMatrice2Row.val() || !buildMatrice1Col.val() || !buildMatrice2Col.val()) {
-			infoWrapper.html('<p>Uzupełnij wymiary macierzy!</p>');
-			console.log('Uzupełnij wymiary macierzy!');
-			isInvalid = true;
-		}
-
-
-		if(checkedMethod === 'addition' || checkedMethod === 'subtraction') {
-			if(!(buildMatrice1Row.val() === buildMatrice2Row.val() && buildMatrice1Col.val() === buildMatrice2Col.val())) {
-				infoWrapper.html('<p>Przy dodawaniu i odejmowaniu, macierze powinny miec te same wymiary!</p>');
-				console.log('Przy dodawaniu i odejmowaniu, macierze powinny miec te same wymiary!');
-				isInvalid = true;
-			}
-		}
-
-		if(checkedMethod === 'multiplication') {
-			if(!(buildMatrice1Col.val() === buildMatrice2Row.val())) {
-				infoWrapper.html('<p>Przy mnożeniu macierzy, pierwsza macierz powinna miec tyle kolumn co druga wierszy!</p>');
-				console.log('Przy mnożeniu macierzy, pierwsza macierz powinna miec tyle kolumn co druga wierszy!');
-				isInvalid = true;
-			}
-		}
-
-		if(checkedMethod === 'determinant') {
-			if(!(buildMatrice1Col.val() === buildMatrice1Row.val())) {
-				infoWrapper.html('<p>Przy liczeniu wyznacznika macierzy, macierz powinna byc kwadratowa!</p>');
-				console.log('Przy liczeniu wyznacznika macierzy, macierz powinna byc kwadratowa!');
-				isInvalid = true;
-			}
-		}
-
-		matriceInputs.each(function (index, eachInput) {
-			eachInput = $(eachInput);
-			if(!eachInput.val()) isInvalid = true;
-		});
+		let isInvalid = validateMatriceCalculator(matriceInputs, checkedMethod);
 
 		if(isInvalid) return;
 
