@@ -152,6 +152,39 @@
 
 	}
 
+	/* Funkcja odpowiadająca za liczenie wyznacznika macierzy */
+	function determinantMatrice(firstMatrice) {
+
+		let resultArr = [];
+		let det = 0;
+
+		let arrsLength = firstMatrice.length,
+			matricesResultWrapper = $('.matrices-result');
+
+			if (arrsLength == 1) {
+				det = firstMatrice[0]
+				console.log('det = ' + det);
+			} else if (arrsLength == 2) {
+				det = (firstMatrice[0][0] * firstMatrice[1][1]) - (firstMatrice[0][1] * firstMatrice[1][0])
+				console.log('det = ' + det);
+			} else if (arrsLength == 3) {
+				det = (firstMatrice[0][0] * firstMatrice[1][1] * firstMatrice[2][2]) +
+					(firstMatrice[1][0] * firstMatrice[2][1] * firstMatrice[0][2]) +
+					(firstMatrice[2][0] * firstMatrice[0][1] * firstMatrice[1][2]) -
+					(firstMatrice[0][2] * firstMatrice[1][1] * firstMatrice[2][0]) -
+					(firstMatrice[1][2] * firstMatrice[2][1] * firstMatrice[0][0]) -
+					(firstMatrice[2][2] * firstMatrice[0][1] * firstMatrice[1][0]);
+					console.log('det = ' + det);
+			}
+
+
+		generateMatrices(arrsLength, arrsLength, null, null, matricesResultWrapper);
+
+		let matriceInputs = matricesResultWrapper.find($('input'));
+		addResultToInputs(matriceInputs, resultArr);
+
+	}
+
     let methodRadios = $('input[name="method"]'),
         matriceSizer2 = $('#matrice-sizer-2'),
         methodDeterminant = null;
@@ -166,6 +199,7 @@
             matriceSizer2.slideUp();
             secondMatrice && $(secondMatrice).fadeOut();
             methodDeterminant = true;
+			matricesWrapper.html(' ');
 
         } else {
             matriceSizer2.slideDown();
@@ -212,7 +246,8 @@
 			rightMatrice = $($('.matrices-wrapper table')[1]),
 
 			leftMatriceRows = leftMatrice.find($('tr')),
-			rightMatriceRows = rightMatrice.find($('tr'));
+			rightMatriceRows = rightMatrice.find($('tr')),
+			infoWrapper = optionsForm.find('.info-wrapper');
 
 
         let isInvalid = false,
@@ -220,17 +255,27 @@
 			matriceInputs = $('.matrices-wrapper input');
 
         if(!checkedMethod) {
+			infoWrapper.html('<p>Wybierz metodę obliczania!</p>');
 			console.log('Wybierz metodę obliczania!');
 			isInvalid = true;
 		}
 
-		if(!buildMatrice1Row.val() || !buildMatrice2Row.val() || !buildMatrice1Col.val() || !buildMatrice2Col.val()) {
+		if (methodDeterminant) {
+			if (!buildMatrice1Row.val() || !buildMatrice1Col.val()) {
+				infoWrapper.html('<p>Uzupełnij wymiary macierzy!</p>');
+				console.log('Uzupełnij wymiary macierzy!');
+				isInvalid = true;
+			}
+		} else if(!buildMatrice1Row.val() || !buildMatrice2Row.val() || !buildMatrice1Col.val() || !buildMatrice2Col.val()) {
+			infoWrapper.html('<p>Uzupełnij wymiary macierzy!</p>');
 			console.log('Uzupełnij wymiary macierzy!');
 			isInvalid = true;
 		}
 
+
 		if(checkedMethod === 'addition' || checkedMethod === 'subtraction') {
 			if(!(buildMatrice1Row.val() === buildMatrice2Row.val() && buildMatrice1Col.val() === buildMatrice2Col.val())) {
+				infoWrapper.html('<p>Przy dodawaniu i odejmowaniu, macierze powinny miec te same wymiary!</p>');
 				console.log('Przy dodawaniu i odejmowaniu, macierze powinny miec te same wymiary!');
 				isInvalid = true;
 			}
@@ -238,7 +283,16 @@
 
 		if(checkedMethod === 'multiplication') {
 			if(!(buildMatrice1Col.val() === buildMatrice2Row.val())) {
+				infoWrapper.html('<p>Przy mnożeniu macierzy, pierwsza macierz powinna miec tyle kolumn co druga wierszy!</p>');
 				console.log('Przy mnożeniu macierzy, pierwsza macierz powinna miec tyle kolumn co druga wierszy!');
+				isInvalid = true;
+			}
+		}
+
+		if(checkedMethod === 'determinant') {
+			if(!(buildMatrice1Col.val() === buildMatrice1Row.val())) {
+				infoWrapper.html('<p>Przy liczeniu wyznacznika macierzy, macierz powinna byc kwadratowa!</p>');
+				console.log('Przy liczeniu wyznacznika macierzy, macierz powinna byc kwadratowa!');
 				isInvalid = true;
 			}
 		}
@@ -256,6 +310,7 @@
 		checkedMethod === 'addition' && addMatrices(firstMatriceArr, secondMatriceArr);
 		checkedMethod === 'subtraction' && addMatrices(firstMatriceArr, secondMatriceArr, true);
 		checkedMethod === 'multiplication' && multiplyMatrices(firstMatriceArr, secondMatriceArr);
+		checkedMethod === 'determinant' && determinantMatrice(firstMatriceArr);
 
     });
 

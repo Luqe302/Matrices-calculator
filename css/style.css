@@ -4,9 +4,13 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
 input {
     padding: .25rem;
-    width: 1.5rem;
+    width: 2.3rem;
     border: none;
     border-bottom: 1px solid #aaaa;
     text-align: center;
@@ -17,6 +21,9 @@ button[type="submit"] {
     font-size: 1rem;
     margin-top: 1rem;
     cursor: pointer;
+}
+.info-wrapper {
+    color: red;
 }
 
 .matrices-wrapper {
